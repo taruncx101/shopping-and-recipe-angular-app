@@ -3,11 +3,15 @@ import { Subject } from 'rxjs';
 
 export class ShoppingListService {
   ingredientChanged = new Subject<Ingredient[]>();
+  startedEditing = new Subject<number>();
   private ingredients: Ingredient[] = [
     new Ingredient('Apples', 5),
     new Ingredient('Tomatoes', 10),
   ];
 
+  getIngredient(index: number) {
+    return this.ingredients[index];
+  }
   getIngredients() {
     return this.ingredients.slice();
   }
