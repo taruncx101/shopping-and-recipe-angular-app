@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RecipeService } from '../recipes/recipe.service';
+import { Recipe } from '../recipes/recipe.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,9 +21,10 @@ export class DataStorageService {
   }
 
   fetchRecipies() {
-    this.http.get('https://shopping-and-recipe-angular.firebaseio.com/recipies.json')
-    .subscribe( recipies => {
-      console.log(recipies);
+    this.http.get<Recipe[]>('https://shopping-and-recipe-angular.firebaseio.com/recipies.json')
+    .subscribe( recipes => {
+      this.recipeService.setRecipies(recipes);
+      console.log(recipes);
     });
   }
 }
