@@ -14,8 +14,11 @@ export class HeaderComponent {
   onSelect(feature: 'string') {
     this.featureSelected.emit(feature);
   }
-  onsaveData() {
+  onSaveData() {
     this.datastorageService.storeRecipes();
+  }
+  onFetchData() {
+    this.datastorageService.fetchRecipies();
   }
 
 }

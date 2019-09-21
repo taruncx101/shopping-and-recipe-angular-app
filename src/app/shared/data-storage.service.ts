@@ -18,4 +18,11 @@ export class DataStorageService {
       }
     );
   }
+
+  fetchRecipies() {
+    this.http.get('https://shopping-and-recipe-angular.firebaseio.com/recipies.json')
+    .subscribe( recipies => {
+      console.log(recipies);
+    });
+  }
 }
