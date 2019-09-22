@@ -9,6 +9,8 @@ import { NgForm } from '@angular/forms';
 })
 export class AuthComponent implements OnInit {
   isLoginMode = true;
+  isLoading = false;
+  error: string = null;
 
   constructor(private authService: AuthService) { }
 
@@ -24,15 +26,18 @@ export class AuthComponent implements OnInit {
     // console.log(form.value);
     const email = form.value.email;
     const password = form.value.password;
-
+    this.isLoading = true;
     if (this.isLoginMode) {
       // ...
     } else {
       this.authService.signup(email, password)
       .subscribe( resData => {
+        this.isLoading = false;
         console.log(resData);
-      }, error => {
-        console.log(error);
+      }, errorMsg => {
+        this.isLoading = false;
+        console.log(errorMsg);
+        this.error = errorMsg;
       });
     }
     form.reset();
