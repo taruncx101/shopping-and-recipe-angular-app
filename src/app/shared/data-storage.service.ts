@@ -29,27 +29,19 @@ export class DataStorageService {
   }
 
   fetchRecipies() {
-    return this.authService.user
-    .pipe(take(1),
-      exhaustMap(
-        user => {
-          return this.http
-          .get<Recipe[]>(
-            'https://shopping-and-recipe-angular.firebaseio.com/recipies.json',
-            {
-              params: new HttpParams().set('auth', user.token)
-            }
-            );
-      }),
-      map( recipes => {
-        return recipes.map( recipe => {
-          return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : [] };
-        });
-      }),
-      tap( recipes => {
-        this.recipeService.setRecipies(recipes);
-      })
-     )
-    ;
+    return this.http
+    .get<Recipe[]>(
+      'https://shopping-and-recipe-angular.firebaseio.com/recipies.json'
+      )
+      .pipe(
+        map( recipes => {
+          return recipes.map( recipe => {
+            return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : [] };
+          });
+        }),
+        tap( recipes => {
+          this.recipeService.setRecipies(recipes);
+        })
+      );
   }
 }
