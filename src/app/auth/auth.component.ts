@@ -1,8 +1,9 @@
+import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
 import { AlertComponent } from './../shared/alert/alert.component';
 import { AuthService, AuthResponseData } from './auth.service';
-import { Component, OnInit, ComponentFactoryResolver } from '@angular/core';
+import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,16 +11,21 @@ import { Router } from '@angular/router';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   isLoginMode = true;
   isLoading = false;
   error: string = null;
+  @ViewChild(PlaceholderDirective, {static: true}) alertHost: PlaceholderDirective;
+  private closeSub: Subscription;
 
   constructor(private authService: AuthService,
               private router: Router,
               private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit() {
+  }
+  onCloseAlert() {
+    this.error = null;
   }
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
@@ -57,6 +63,20 @@ export class AuthComponent implements OnInit {
   showErrorAlert(message: string) {
     // const alertCmp = new AlertComponent();
     const alertCmpFactory = this.componentFactoryResolver.resolveComponentFactory(AlertComponent);
+    const hostContainerRef = this.alertHost.viewContainerRef;
+    hostContainerRef.clear();
+
+    const componentRef = hostContainerRef.createComponent(alertCmpFactory);
+    componentRef.instance.message = message;
+    this.closeSub = componentRef.instance.closeEvent.subscribe( () => {
+      this.closeSub.unsubscribe();
+      hostContainerRef.clear();
+    });
   }
 
+  ngOnDestroy() {
+    if (this.closeSub) {
+      this.closeSub.unsubscribe();
+    }
+  }
 }
