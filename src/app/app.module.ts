@@ -8,9 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthComponent } from './auth/auth.component';
-import { RecipesModule } from './recipes/recipes.module';
+import { FormsModule } from '@angular/forms';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
 
 @NgModule({
@@ -23,7 +21,6 @@ import { ShoppingListModule } from './shopping-list/shopping-list.module';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    RecipesModule,
     ShoppingListModule,
     SharedModule,
     CoreModule,
