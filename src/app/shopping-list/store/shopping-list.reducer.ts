@@ -61,6 +61,20 @@ export function ShoppingListReducer(
         })
       };
       break;
+    case ShoppingListActions.START_EDIT:
+      return {
+        ...state,
+        editedIngredientIndex: action.payload,
+        editedIngredient: {...state.ingredients[action.payload]}
+      };
+      break;
+    case ShoppingListActions.STOP_EDIT:
+      return {
+        ...state,
+        editedIngredientIndex: -1,
+        editedIngredient: null
+       };
+      break;
     default:
       // console.log('1st');
       return state;
