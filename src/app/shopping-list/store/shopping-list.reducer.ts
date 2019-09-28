@@ -9,10 +9,6 @@ export interface State {
 }
 
 
-export interface AppState {
-  shoppingList: State;
-}
-
 
 const initialState: State = {
   ingredients: [
