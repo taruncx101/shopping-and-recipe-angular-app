@@ -1,3 +1,4 @@
+import { Store } from '@ngrx/store';
 import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
 import { AlertComponent } from './../shared/alert/alert.component';
 import { AuthService, AuthResponseData } from './auth.service';
@@ -5,6 +6,8 @@ import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } fro
 import { NgForm } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import * as fromApp from '../store/app.reducer';
+import * as authActions from '../auth/store/auth.actions';
 
 @Component({
   selector: 'app-auth',
@@ -20,7 +23,8 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   constructor(private authService: AuthService,
               private router: Router,
-              private componentFactoryResolver: ComponentFactoryResolver) { }
+              private componentFactoryResolver: ComponentFactoryResolver,
+              private store: Store<fromApp.AppState>) { }
 
   ngOnInit() {
   }
@@ -43,7 +47,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     if (this.isLoginMode) {
-      authObs = this.authService.login(email, password);
+      this.store.dispatch(new authActions.LoginStart({email, password}));
+      // authObs = this.authService.login(email, password);
     } else {
       authObs = this.authService.signup(email, password);
     }
