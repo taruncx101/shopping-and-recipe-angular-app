@@ -19,8 +19,65 @@ export interface AuthResponseData {
   registered?: boolean;
 }
 
+const handleAuthentication = (resData: AuthResponseData) => {
+  const expirationDate = new Date(new Date().getTime() + +resData.expiresIn * 1000);
+  return new AuthActions.AuthenticateSuccess({
+      email: resData.email,
+      userId: resData.localId,
+      token: resData.idToken,
+      expirationdate: expirationDate
+   })
+  ;
+};
+
+const handleError = (errorRes) => {
+  let errorMsg = 'An unknown error occured.';
+  if (!errorRes.error || !errorRes.error.error) {
+    return of(new AuthActions.AuthenticateFail(errorMsg));
+  }
+  switch (errorRes.error.error.message) {
+    case 'EMAIL_EXISTS':
+      errorMsg = 'This email already exist.';
+      break;
+    case 'EMAIL_NOT_FOUND':
+      errorMsg = 'This email address not found.';
+      break;
+    case 'INVALID_PASSWORD':
+      errorMsg = 'This passworrd is not correct.';
+      break;
+    case 'USER_DISABLED':
+      errorMsg = 'The user account has been disabled by an administrator.';
+      break;
+  }
+  return of(new AuthActions.AuthenticateFail(errorMsg));
+};
+
 @Injectable()
 export class AuthEffects {
+
+  @Effect()
+  authSignUp = this.actions$.pipe(
+    ofType(AuthActions.SIGNUP_START),
+    switchMap((signupAction: AuthActions.SignupStart) => {
+      return this.http.post<AuthResponseData>(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.fireBaseApiKey,
+        {
+          email: signupAction.payload.email,
+          password: signupAction.payload.password,
+          returnSecureToken: true
+        }
+      )
+      .pipe(
+        map( resData => {
+          return handleAuthentication(resData);
+        }),
+        catchError( errorRes => {
+          return handleError(errorRes);
+        }),
+      );
+    })
+  );
+
   @Effect()
   authLogin = this.actions$.pipe(
     ofType(AuthActions.LOGIN_START),
@@ -35,35 +92,10 @@ export class AuthEffects {
       )
       .pipe(
         map( resData => {
-          const expirationDate = new Date(new Date().getTime() + +resData.expiresIn * 1000);
-          return new AuthActions.Login({
-              email: resData.email,
-              userId: resData.localId,
-              token: resData.idToken,
-              expirationdate: expirationDate
-           })
-          ;
+          return handleAuthentication(resData);
         }),
         catchError( errorRes => {
-          let errorMsg = 'An unknown error occured.';
-          if (!errorRes.error || !errorRes.error.error) {
-            return of(new AuthActions.LoginFail(errorMsg));
-          }
-          switch (errorRes.error.error.message) {
-            case 'EMAIL_EXISTS':
-              errorMsg = 'This email already exist.';
-              break;
-            case 'EMAIL_NOT_FOUND':
-              errorMsg = 'This email address not found.';
-              break;
-            case 'INVALID_PASSWORD':
-              errorMsg = 'This passworrd is not correct.';
-              break;
-            case 'USER_DISABLED':
-              errorMsg = 'The user account has been disabled by an administrator.';
-              break;
-          }
-          return of(new AuthActions.LoginFail(errorMsg));
+          return handleError(errorRes);
         }),
 
       );
@@ -73,8 +105,8 @@ export class AuthEffects {
   @Effect({
     dispatch: false
   })
-  authSuccess = this.actions$.pipe(
-    ofType(AuthActions.LOGIN),
+  authRedirect = this.actions$.pipe(
+    ofType(AuthActions.AUTHENTICATE_SUCCESS, AuthActions.LOGOUT),
     tap(() => {
       this.router.navigate(['/']);
     })
