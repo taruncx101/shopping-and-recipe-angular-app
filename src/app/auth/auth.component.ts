@@ -1,11 +1,9 @@
 import { Store } from '@ngrx/store';
 import { PlaceholderDirective } from './../shared/placeholder/placeholder.directive';
 import { AlertComponent } from './../shared/alert/alert.component';
-import { AuthService, AuthResponseData } from './auth.service';
 import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import * as fromApp from '../store/app.reducer';
 import * as authActions from '../auth/store/auth.actions';
 
@@ -22,9 +20,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   private closeSub: Subscription;
   private storeSub: Subscription;
 
-  constructor(private authService: AuthService,
-              private router: Router,
-              private componentFactoryResolver: ComponentFactoryResolver,
+  constructor(private componentFactoryResolver: ComponentFactoryResolver,
               private store: Store<fromApp.AppState>) { }
 
   ngOnInit() {
@@ -53,28 +49,14 @@ export class AuthComponent implements OnInit, OnDestroy {
     const email = form.value.email;
     const password = form.value.password;
 
-    // let authObs: Observable<AuthResponseData>;
 
     this.isLoading = true;
 
     if (this.isLoginMode) {
       this.store.dispatch(new authActions.LoginStart({email, password}));
-      // authObs = this.authService.login(email, password);
     } else {
-      // authObs = this.authService.signup(email, password);
       this.store.dispatch(new authActions.SignupStart({email, password}));
     }
-    // authObs.subscribe( resData => {
-    //   this.isLoading = false;
-    //   this.router.navigate(['/recipes']);
-    //   console.log(resData);
-    // }, errorMsg => {
-    //   this.isLoading = false;
-    //   console.log(errorMsg);
-    //   // this.error = errorMsg;
-    //   this.showErrorAlert(errorMsg);
-
-    // });
     form.reset();
   }
   showErrorAlert(message: string) {
