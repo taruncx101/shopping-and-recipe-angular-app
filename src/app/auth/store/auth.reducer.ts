@@ -55,7 +55,7 @@ export function authReducer(state = initialState, action: AuthActions.AuthAction
     case AuthActions.CLEAR_ERROR:
       return {
         ...state,
-        authError: false,
+        authError: null,
       };
       break;
     default:

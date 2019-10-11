@@ -12,6 +12,8 @@ import { FormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import * as fromApp from './store/app.reducer';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
 
 
 @NgModule({
@@ -25,6 +27,9 @@ import { EffectsModule } from '@ngrx/effects';
     FormsModule,
     HttpClientModule,
     EffectsModule.forRoot([AuthEffects]),
+    StoreDevtoolsModule.instrument({
+      logOnly: environment.production
+    }),
     StoreModule.forRoot(fromApp.appReducer),
     SharedModule,
     CoreModule,
