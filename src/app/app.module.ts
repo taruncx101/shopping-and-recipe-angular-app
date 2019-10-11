@@ -13,6 +13,7 @@ import { StoreModule } from '@ngrx/store';
 import * as fromApp from './store/app.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { environment } from 'src/environments/environment';
 
 
@@ -30,6 +31,7 @@ import { environment } from 'src/environments/environment';
     StoreDevtoolsModule.instrument({
       logOnly: environment.production
     }),
+    StoreRouterConnectingModule.forRoot(),
     StoreModule.forRoot(fromApp.appReducer),
     SharedModule,
     CoreModule,
