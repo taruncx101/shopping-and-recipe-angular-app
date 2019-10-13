@@ -15,6 +15,7 @@ export class AuthenticateSuccess implements Action {
     userId: string;
     token: string;
     expirationdate: Date;
+    redirect: boolean;
   }) {
     // console.log(payload);
   }
