@@ -3,6 +3,7 @@ import { Recipe } from '../recipe.model';
 
 export const SET_RECIPES = '[Recipes] Set Recipes';
 export const FETCH_RECIPES = '[Recipes] Fetch Recipes';
+export const STORE_RECIPES = '[Recipes] Store Recipes';
 export const ADD_RECIPE = '[Recipes] Add Recipes';
 export const UPDATE_RECIPE = '[Recipes] Update Recipes';
 export const DELETE_RECIPE = '[Recipes] Delete Recipes';
@@ -16,6 +17,10 @@ export class SetRecipes implements Action {
 
 export class FetchRecipes implements Action {
   readonly type = FETCH_RECIPES;
+}
+
+export class StoreRecipes implements Action {
+  readonly type = STORE_RECIPES;
 }
 
 export class AddRecipe implements Action {
